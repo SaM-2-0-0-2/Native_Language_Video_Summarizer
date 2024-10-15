@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="x-icon" href="../static/images/icon.png">
+    <title>GROUP-C9 | NLVS </title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+
+
+<body>
+    <nav class="flex-div">
+        <div class="nav-left">
+            <img src="../static/images/logo.png" class="logo">
+        </div>
+            <div class="nav-middle">
+                <form id="search-form" method="post">
+                    <div class="search-box">
+                        <input type="text" name="youtube-url" placeholder="Paste Youtube URL" id="youtube-url">
+                        <button onclick="playAndFetch()" class="btn"><img src="../static/images/search.png" class="search-icon" id="search-icon"></button>
+                    </div>
+                </form>
+            </div>
+        <div class="nav-right">
+        </div>
+    </nav>
+
+    <!-----------------main--------------------->
+    <div class="container play-container">
+        <div class="row">
+            <div class="play-video" id="video-player">
+                <h1>Video appears here</h1>
+            </div>
+            <div class="right-sidebar">
+                <form id="transcription-form" method="post">
+                    <div class="transcription-container" id="transcription-container">
+                        <textarea class="transcription-box" id="transcription-box"
+                            placeholder="Transcription" readonly>{{output1}}</textarea>
+                    </div>
+                </form>
+                <form id="translate-transcription-form" method="post">
+                    <div class="translate-transcription-container">
+                        <textarea class="translate-box" placeholder="Translated Transcription"
+                            id="translate-box" readonly>{{output2}}</textarea>
+                        <div id="copy-notification">Copied!</div>
+                        <div class="translate-controls">
+                            <select class="language-dropdown" id="nativelanguage">
+                                <option value="#">-- Select Native Language --</option>
+                                <option value="bn">Bengali</option>
+                                <option value="gu">Gujarati</option>
+                                <option value="hi">Hindi</option>
+                                <option value="kn">Kannada</option>
+                                <option value="mr">Marathi</option>
+                                <option value="ml">Malayalam</option>
+                                <option value="ta">Tamil</option>
+                                <option value="te">Telugu</option>                            
+                                <option value="pa">Punjabi</option>
+                            </select>
+                            <div class="submit-icon">
+                                <button id="submitbutton">Submit</button>
+                            </div>
+                            <div class="icon-container">
+                                <img src="../static/images/copy.png" alt="Copy icon" class="copy-icon" id="copy-icon">
+                                <img src="../static/images/srt.png" alt="SRT icon" class="srt-icon" id="srt-icon">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <form id="summarization-form" method="post">
+            <div class="summarization">
+                <button>Summarize</button>
+                <div class="Summarize-container">
+                    <textarea class="Summarize-box" placeholder="Native Language Summary" id="Summarize-box" readonly></textarea>
+                </div>
+                <div class="summarize-controls">
+                    <img src="../static/images/srt.png" alt="srt icon" class="srt-icon" id="srt-icon1">
+                    <a href="../static/output.mp3" download="summary.mp3"><img src="../static/images/music.png" alt="music icon" class="music-icon" id="download-audio"></a>
+                    <img src="../static/images/copy.png" alt="Copy icon" class="copy-icon" id="copy-icon1">
+                    <img src="../static/images/share.png" alt="Share icon" class="share-icon" id="share-icon">
+                    <div class="dialog-box" id="dialog-box">
+                        <img src="../static/images/facebook.png" alt="Facebook" class="social-icon" id="facebook-icon">
+                        <img src="../static/images/twitter.png" alt="Twitter" class="social-icon" id="twitter-icon">
+                        <img src="../static/images/whatsapp.png" alt="WhatsApp" class="social-icon" id="whatsapp-icon">
+                        <img src="../static/images/telegram.png" alt="Telegram" class="social-icon" id="telegram-icon">
+                        <img src="../static/images/instagram.png" alt="Instagram" class="social-icon" id="instagram-icon">
+                    </div>
+                    <img src="../static/images/voice.png" alt="voice icon" class="voice-icon" id="voice-icon">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="footer-content">
+        <p>&copy; All Rights Reserved By Group C9</p>
+    </div>
+
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=apGsrStG"></script>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="../static/script.js"></script>
+<script>
+    $(document).ready(function(){
+        $('#search-form').submit(function(event){
+            event.preventDefault(); // Prevent form submission
+            var youtubeLink = $('#youtube-url').val();
+            $.ajax({
+                type: 'POST',
+                url: '/process_input',
+                data: {"youtubeLink": youtubeLink},
+                success: function(response){
+                    $('#transcription-box').html(response); // Update output container with response from backend
+                }
+            });
+        });
+    });
+
+    $(document).ready(function(){
+        $('#translate-transcription-form').submit(function(event){
+            event.preventDefault(); // Prevent form submission
+            var languagecode = $('#nativelanguage').val();
+            $.ajax({
+                type: 'POST',
+                url: '/process_input2',
+                data: {"languagecode": languagecode},
+                success: function(response){
+                    $('#translate-box').html(response); // Update output container with response from backend
+                }
+            });
+        });
+        });
+        
+        $(document).ready(function(){
+        $('#summarization-form').submit(function(event){
+            event.preventDefault(); // Prevent form submission
+            var languagecode = $('#nativelanguage').val();
+            $.ajax({
+                type: 'POST',
+                url: '/process_input3',
+                data: {"languagecode": languagecode},
+                success: function(response){
+                    $('#Summarize-box').html(response); // Update output container with response from backend
+                }
+            });
+        });
+        });
+
+
+
+    document.getElementById('voice-icon').addEventListener('click', function () {
+        var text = document.getElementById("Summarize-box").value;
+        var language = document.getElementById("nativelanguage").value;
+        if(document.getElementById("nativelanguage").value == "hi")
+        {
+            responsiveVoice.speak(text,"Hindi Male");
+        }  
+
+        if(language == "gu" || language == "kn" ||language == "te" || language == "ml" || language == "mr")
+        {
+            $(document).ready(function(){
+                $('#voice-icon').click(function(event){
+                    event.preventDefault(); // Prevent form submission
+                    var languagecode = $('#nativelanguage').val();
+                    $.ajax({
+                        type: 'POST',
+                        url: '/process_input4',
+                        data: {"languagecode": languagecode, "text":text},
+                        success: function(response){
+                            var audio = new Audio('../static/output.mp3');
+                            audio.play();
+                        }
+                    });
+                });
+            });
+            
+        }    
+
+        if(document.getElementById("nativelanguage").value == "ta")
+        {
+            responsiveVoice.speak(text,"Tamil Female");
+        }  
+
+        if(document.getElementById("nativelanguage").value == "pa")
+        {
+            responsiveVoice.speak("Text to speech support is not currently available for this language.","US English Male");
+        } 
+
+        if(document.getElementById("nativelanguage").value == "bn")
+        {
+            responsiveVoice.speak(text,"Bangla India Male");
+        }  
+    
+        if(document.getElementById("nativelanguage").value == "#")
+        {
+            alert("Please select native langauge")
+        }  
+    });
+</script>
+
+
+</html>
